@@ -53,21 +53,23 @@ module.exports = async function (context, myTimer) {
             upload.writeJson('menu.json', result);
         })
 
-    // download
-    //     .readBinary('plugins/Jobs/jobs.sqlite.db')
-    //     .then((data) => {
-    //         return new Promise((resolve, reject) => {
-    //             fs.writeFileSync(jobsDbPath, data);
-    //             const jobs = new Jobs(jobsDbPath);
-    //             jobs.do((err, result) => {
-    //                 // console.log(points, ranks)
-    //                 if (err) return reject(err)
-    //                 resolve(result)
-    //             });
-    //         })
-    //     })
-    //     .then(({points, ranks}) => {
-    //         upload.writeJson('jobs_rank.json', ranks);
-    //         upload.writeJson('jobs_point.json', points);
-    //     })
+        
+    download
+        .readBinary('plugins/Jobs/jobs.sqlite.db')
+        .then((data) => {
+            return new Promise((resolve, reject) => {
+                const jobs = new Jobs(data);
+                jobs.init().then(() => {
+                    jobs.do((err, result) => {
+                        // console.log(result)
+                        if (err) return reject(err)
+                        resolve(result)
+                    });
+                })
+            })
+        })
+        .then(({points, ranks}) => {
+            upload.writeJson('jobs_rank.json', ranks);
+            upload.writeJson('jobs_point.json', points);
+        })
 };

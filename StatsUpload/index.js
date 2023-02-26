@@ -71,9 +71,9 @@ module.exports = async function (context, myTimer) {
     
 
     await Promise.all([jobMcMMO, jobChestCommands, jobJobs]).catch((e) => {
-        context.error(e)
+        context.log.error(e)
     })
     
-    
+
     context.log('JavaScript timer trigger function ran!', new Date().toISOString());
 };

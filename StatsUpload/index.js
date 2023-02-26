@@ -3,8 +3,6 @@ const Mcmmo = require('../lib/Mcmmo');
 const ChestCommands = require('../lib/ChestCommands');
 const Upload = require('../lib/AzureBlobUpload');
 const Donwload = require('../lib/AzureFileDownload');
-const path = require('path')
-const fs = require('fs')
 
 module.exports = async function (context, myTimer) {
     var timeStamp = new Date().toISOString();
@@ -16,12 +14,10 @@ module.exports = async function (context, myTimer) {
     context.log('JavaScript timer trigger function ran!', timeStamp);
     
 
-    const jobsDbPath = path.join(__dirname, 'jobs.sqlite.db');
-
     const upload = new Upload(process.env.UPLOAD_BLOB_ACCOUNT, process.env.UPLOAD_BLOB_SAS, process.env.UPLOAD_BLOB_CONTAINER);
     const download = new Donwload(process.env.DOWNLOAD_FILE_ACCOUNT, process.env.DOWNLOAD_FILE_SAS, process.env.DOWNLOAD_FILE_SHARE)
 
-    download
+    const jobMcMMO = download
         .readString('plugins/mcMMO/flatfile/mcmmo.users')
         .then((data) => {
             return new Promise((resolve, reject) => {
@@ -37,7 +33,7 @@ module.exports = async function (context, myTimer) {
             return upload.writeJson('mcmmo.json', result);
         });
 
-    download
+    const jobChestCommands = download
         .readString('plugins/ChestCommands/menu/default.yml')
         .then((data) => {
             return new Promise((resolve, reject) => {
@@ -54,7 +50,7 @@ module.exports = async function (context, myTimer) {
         })
 
         
-    download
+    const jobJobs = download
         .readBinary('plugins/Jobs/jobs.sqlite.db')
         .then((data) => {
             return new Promise((resolve, reject) => {
@@ -72,4 +68,12 @@ module.exports = async function (context, myTimer) {
             upload.writeJson('jobs_rank.json', ranks);
             upload.writeJson('jobs_point.json', points);
         })
+    
+
+    await Promise.all([jobMcMMO, jobChestCommands, jobJobs]).catch((e) => {
+        context.error(e)
+    })
+    
+    
+    context.log('JavaScript timer trigger function ran!', new Date().toISOString());
 };

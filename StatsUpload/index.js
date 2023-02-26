@@ -1,4 +1,4 @@
-// const Jobs = require('../lib/Jobs');
+const Jobs = require('../lib/Jobs');
 const Mcmmo = require('../lib/Mcmmo');
 const ChestCommands = require('../lib/ChestCommands');
 const Upload = require('../lib/AzureBlobUpload');

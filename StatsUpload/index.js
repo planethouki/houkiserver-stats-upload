@@ -49,6 +49,21 @@ module.exports = async function (context, myTimer) {
             upload.writeJson('menu.json', result);
         })
 
+    const jobJobsShop = download
+        .readString('plugins/jobs/shopItems.yml')
+        .then((data) => {
+            return new Promise((resolve, reject) => {
+                const jobsShop = new JobsShop(data);
+                jobsShop.do((err, result) => {
+                    // console.log(result)
+                    if (err) return reject(err)
+                    resolve(result)
+                });
+            })
+        })
+        .then((result) => {
+            upload.writeJson('shopItems.json', result);
+        })
         
     const jobJobs = download
         .readBinary('plugins/Jobs/jobs.sqlite.db')
@@ -70,7 +85,7 @@ module.exports = async function (context, myTimer) {
         })
     
 
-    await Promise.all([jobMcMMO, jobChestCommands, jobJobs]).catch((e) => {
+    await Promise.all([jobMcMMO, jobChestCommands, jobJobsShop, jobJobs]).catch((e) => {
         context.log.error(e)
     })
     

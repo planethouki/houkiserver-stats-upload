@@ -3,6 +3,7 @@ const Mcmmo = require('../lib/Mcmmo');
 const ChestCommands = require('../lib/ChestCommands');
 const Upload = require('../lib/AzureBlobUpload');
 const Donwload = require('../lib/AzureFileDownload');
+const JobsShop = require('../lib/JobsShop');
 
 module.exports = async function (context, myTimer) {
     var timeStamp = new Date().toISOString();
